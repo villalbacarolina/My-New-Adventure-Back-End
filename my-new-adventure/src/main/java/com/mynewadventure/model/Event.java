@@ -26,15 +26,9 @@ public class Event {
     private String title;
     private String type;
     private LocalDate date;
-    private LocalTime time;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private String location;
-
-    private String description;
-    private String link;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User publisher;
-
     @ManyToMany
     @JoinTable(
         name = "event_tag",
@@ -42,5 +36,10 @@ public class Event {
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags;
+    
+    private String description;
+    private String link;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User publisher;
     
 }
