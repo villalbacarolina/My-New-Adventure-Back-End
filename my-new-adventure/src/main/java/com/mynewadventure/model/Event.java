@@ -22,7 +22,6 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //private image;
     private String title;
     private String type;
     private LocalDate date;
@@ -31,15 +30,18 @@ public class Event {
     private String location;
     @ManyToMany
     @JoinTable(
-        name = "event_tag",
-        joinColumns = @JoinColumn(name = "event_id"),
-        inverseJoinColumns = @JoinColumn(name = "tag_id")
+            name = "event_tag",
+            joinColumns = @JoinColumn(name = "event_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags;
-    
+
     private String description;
     private String link;
-    @ManyToOne(fetch = FetchType.LAZY)
-    private User publisher;
-    
+    @ManyToOne
+    @JoinColumn(name = "user_activity_id")
+    private UserActivity publisher;
+
+    @ManyToMany(mappedBy = "savedEvents")
+    private Set<UserActivity> savedBy;
 }
