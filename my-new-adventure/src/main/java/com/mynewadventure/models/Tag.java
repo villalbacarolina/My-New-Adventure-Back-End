@@ -1,5 +1,6 @@
 package com.mynewadventure.models;
 
+import java.util.HashSet;
 import java.util.Set;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,8 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
 public class Tag {
 	
 	@Id
@@ -23,6 +22,44 @@ public class Tag {
     private String name;
 	
     @ManyToMany(mappedBy = "tags")
-    private Set<Event> events;
+    private Set<Event> eventsThatUseThisTag;
+
+    //--------CONSTRUCTORS--------
+
+    public Tag() {
+        eventsThatUseThisTag = new HashSet<Event>();
+    }
+
+    public Tag(String name) {
+        this();
+        this.name = name;
+    }
+
+    //--------GETTERS & SETTERS--------
+
+    public Set<Event> getEventsThatUseThisTag() {
+        return eventsThatUseThisTag;
+    }
+
+    public void addEventThatUseThisTag(Event event) {
+        if(eventsThatUseThisTag.add(event))
+            event.getTags().add(this);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
 }
