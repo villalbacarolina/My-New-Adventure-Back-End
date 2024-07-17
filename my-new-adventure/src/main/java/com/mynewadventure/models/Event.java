@@ -42,6 +42,4 @@ public class Event {
     @JoinColumn(name = "user_activity_id")
     private UserActivity publisher;
 
-    @ManyToMany(mappedBy = "savedEvents")
-    private Set<UserActivity> savedBy;
 }
