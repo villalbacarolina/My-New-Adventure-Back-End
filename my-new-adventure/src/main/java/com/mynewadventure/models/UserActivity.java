@@ -28,5 +28,18 @@ public class UserActivity {
 
     @OneToMany(mappedBy = "publisher", fetch = FetchType.LAZY)
     private Set<Event> publishedEvents;
+
+    //--------GETTERS & SETTERS--------
+
+    public Set<Event> getPublishedEvents() {
+        return publishedEvents;
+    }
+
+    public void addPublishedEvent(Event event) {
+        if (publishedEvents.add(event)) {
+            event.setPublisher(this);
+        }
+    }
+
 }
 

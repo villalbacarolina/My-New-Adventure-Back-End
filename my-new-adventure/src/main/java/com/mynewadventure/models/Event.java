@@ -76,6 +76,17 @@ public class Event {
             tag.getEventsThatUseThisTag().remove(this);
     }
 
+    public UserActivity getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(UserActivity publisher) {
+        this.publisher = publisher;
+        if (!publisher.getPublishedEvents().contains(this)) {
+            publisher.addPublishedEvent(this);
+        }
+    }
+
     public Long getId() {
         return id;
     }
