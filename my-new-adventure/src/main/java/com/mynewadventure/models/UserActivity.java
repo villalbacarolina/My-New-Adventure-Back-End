@@ -1,4 +1,4 @@
-package com.mynewadventure.model;
+package com.mynewadventure.models;
 
 
 import jakarta.persistence.*;

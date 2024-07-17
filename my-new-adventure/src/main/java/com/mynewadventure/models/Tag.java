@@ -1,4 +1,4 @@
-package com.mynewadventure.model;
+package com.mynewadventure.models;
 
 import java.util.Set;
 import jakarta.persistence.Entity;
