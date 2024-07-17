@@ -71,6 +71,11 @@ public class Event {
             tag.getEventsThatUseThisTag().add(this);
     }
 
+    public void removeTag(Tag tag) {
+        if (tags.remove(tag))
+            tag.getEventsThatUseThisTag().remove(this);
+    }
+
     public Long getId() {
         return id;
     }

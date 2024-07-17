@@ -7,10 +7,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 public class Tag {
@@ -44,6 +40,11 @@ public class Tag {
     public void addEventThatUseThisTag(Event event) {
         if(eventsThatUseThisTag.add(event))
             event.getTags().add(this);
+    }
+
+    public void removeEventThatDoesntUseThisTag(Event event) {
+        if (eventsThatUseThisTag.remove(event))
+            event.getTags().remove(this);
     }
 
     public String getName() {
