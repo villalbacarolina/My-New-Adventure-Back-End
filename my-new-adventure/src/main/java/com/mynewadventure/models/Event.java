@@ -1,16 +1,9 @@
 package com.mynewadventure.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
-
 import java.util.HashSet;
 import java.util.Set;
-
 import jakarta.persistence.*;
 
 

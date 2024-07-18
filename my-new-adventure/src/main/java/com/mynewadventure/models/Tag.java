@@ -47,8 +47,6 @@ public class Tag {
             event.getTags().remove(this);
     }
 
-
-
     public String getName() {
         return name;
     }
