@@ -1,6 +1,8 @@
 package com.mynewadventure.services;
 
+import com.mynewadventure.models.Event;
 import com.mynewadventure.models.UserActivity;
+import com.mynewadventure.repositories.EventRepository;
 import com.mynewadventure.repositories.UserActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ public class UserActivityService {
 
     @Autowired
     private UserActivityRepository userActivityRepository;
+    @Autowired
+    private EventRepository eventRepository;
 
     public UserActivity createUserActivity(UserActivity userActivity) {
         return userActivityRepository.save(userActivity);
@@ -33,10 +37,15 @@ public class UserActivityService {
         return userActivityRepository.findById(userActivityId).orElseThrow(() -> new RuntimeException("UserActivity not found with id: " + userActivityId));
     }
 
+    public void deleteEventsByPublisher(Long userId) {
+        eventRepository.deleteEventsByPublisher(userId);
+    }
+
     public void deleteUserActivity(Long userActivityId) {
         Optional<UserActivity> userActivityOptional = userActivityRepository.findById(userActivityId);
         if (userActivityOptional.isPresent()) {
             UserActivity userActivity = userActivityOptional.get();
+            deleteEventsByPublisher(userActivity.getId());
             userActivityRepository.delete(userActivity);
         } else {
             throw new RuntimeException("UserActivity not found with id: " + userActivityId);
