@@ -5,20 +5,34 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
 
 
 @Entity
+@Getter @Setter
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @NotBlank
+    @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
     private String title;
     private String type;
+    @NotNull
     private LocalDate date;
+    @NotNull
     private LocalTime startTime;
+    @NotNull
     private LocalTime endTime;
+    @NotNull
+    @NotBlank
     private String location;
     @ManyToMany
     @JoinTable(
@@ -27,9 +41,10 @@ public class Event {
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags;
-
+    @Size(min = 1, max = 3000, message = "Title must be between 3 and 3000 characters")
     private String description;
     private String link;
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "user_activity_id")
     private UserActivity publisher;
@@ -53,11 +68,7 @@ public class Event {
         //this.publisher = publisher;
     }
 
-    //--------GETTERS & SETTERS--------
-
-    public Set<Tag> getTags() {
-        return tags;
-    }
+    //--------METHODS--------
 
     public void addTag(Tag tag) {
         if(tags.add(tag))
@@ -69,87 +80,11 @@ public class Event {
             tag.getEventsThatUseThisTag().remove(this);
     }
 
-    public UserActivity getPublisher() {
-        return publisher;
-    }
-
-    public void setPublisher(UserActivity publisher) {
+    public void setPublisher(@org.jetbrains.annotations.NotNull UserActivity publisher) {
         this.publisher = publisher;
         if (!publisher.getPublishedEvents().contains(this)) {
             publisher.addPublishedEvent(this);
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
     }
 
 }
