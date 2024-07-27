@@ -8,9 +8,8 @@ import com.mynewadventure.repositories.TagRepository;
 import com.mynewadventure.repositories.UserActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 public class EventService {
@@ -23,6 +22,10 @@ public class EventService {
 
     @Autowired
     private TagRepository tagRepository;
+
+    public boolean userIsTheOwner(UserActivity user, Event event){
+        return user.getPublishedEvents().contains(event);
+    }
 
     public Event createEvent(Event event, Long userId) {
         Optional<UserActivity> userActivityOptional = userActivityRepository.findById(userId);
@@ -38,24 +41,30 @@ public class EventService {
         }
     }
 
-    public Event updateEvent(Long eventId, Event eventDetails) {
+    public Event updateEvent(Long eventId, Event newEventInformation, Long userId) {
         Optional<Event> eventOptional = eventRepository.findById(eventId);
         if (eventOptional.isPresent()) {
             Event event = eventOptional.get();
-            event.setTitle(eventDetails.getTitle());
-            event.setType(eventDetails.getType());
-            event.setDate(eventDetails.getDate());
-            event.setStartTime(eventDetails.getStartTime());
-            event.setEndTime(eventDetails.getEndTime());
-            event.setLocation(eventDetails.getLocation());
-            event.setDescription(eventDetails.getDescription());
-            event.setLink(eventDetails.getLink());
-            Set<Tag> newTags = eventDetails.getTags();
-            for (Tag tag : newTags) {
-                event.addTag(tag);
+            Optional<UserActivity> userActivityOptional = userActivityRepository.findById(userId);
+            if (userActivityOptional.isPresent()) {
+                UserActivity userActivity = userActivityOptional.get();
+                if (userIsTheOwner(userActivity, event) ) {
+                    event.setTitle(newEventInformation.getTitle());
+                    event.setType(newEventInformation.getType());
+                    event.setDate(newEventInformation.getDate());
+                    event.setStartTime(newEventInformation.getStartTime());
+                    event.setEndTime(newEventInformation.getEndTime());
+                    event.setLocation(newEventInformation.getLocation());
+                    event.setDescription(newEventInformation.getDescription());
+                    event.setLink(newEventInformation.getLink());
+                    eventRepository.save(event);
+                    return event;
+                } else {
+                    throw new RuntimeException("User is not the owner of the event");
+                }
+            } else {
+                    throw new RuntimeException("UserActivity not found with id: " + eventId);
             }
-            eventRepository.save(event);
-            return event;
         } else {
             throw new RuntimeException("Event not found with id: " + eventId);
         }
@@ -65,22 +74,32 @@ public class EventService {
         return eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found with id: " + eventId));
     }
 
-    public void deleteEvent(Long eventId) {
+    public List<Event> getEvents() {
+        return eventRepository.findAll();
+    }
+
+    public void deleteEvent(Long eventId, Long userId) {
         Optional<Event> eventOptional = eventRepository.findById(eventId);
         if (eventOptional.isPresent()) {
             Event event = eventOptional.get();
-            UserActivity publisher = event.getPublisher();
-            if (publisher != null) {
-                publisher.getPublishedEvents().remove(event);
-                userActivityRepository.save(publisher);
+            Optional<UserActivity> userActivityOptional = userActivityRepository.findById(userId);
+            if (userActivityOptional.isPresent()) {
+                UserActivity userActivity = userActivityOptional.get();
+                if (userIsTheOwner(userActivity, event) ) {
+                    userActivity.getPublishedEvents().remove(event);
+                    userActivityRepository.save(userActivity);
+                    for (Tag tag : event.getTags()) {
+                        tag.removeEventThatDoesntUseThisTag(event);
+                        tagRepository.save(tag);
+                    }
+                    eventRepository.delete(event);
+                }else{
+                    throw new RuntimeException("User is not the owner of the event");
+                }
+            }else{
+                throw new RuntimeException("UserActivity not found with id: " + eventId);
             }
-            Set<Tag> tags = event.getTags();
-            for (Tag tag : tags) {
-                tag.removeEventThatDoesntUseThisTag(event);
-                tagRepository.save(tag);
-            }
-            eventRepository.delete(event);
-        } else {
+        }else{
             throw new RuntimeException("Event not found with id: " + eventId);
         }
     }
@@ -93,6 +112,23 @@ public class EventService {
             if (userActivityOptional.isPresent()) {
                 UserActivity userActivity = userActivityOptional.get();
                 userActivity.getSavedEvents().add(event);
+                userActivityRepository.save(userActivity);
+            } else {
+                throw new RuntimeException("UserActivity not found with id: " + userId);
+            }
+        } else {
+            throw new RuntimeException("Event not found with id: " + eventId);
+        }
+    }
+
+    public void deleteSavedEvent(Long eventId, Long userId) {
+        Optional<Event> eventOptional = eventRepository.findById(eventId);
+        if (eventOptional.isPresent()) {
+            Event event = eventOptional.get();
+            Optional<UserActivity> userActivityOptional = userActivityRepository.findById(userId);
+            if (userActivityOptional.isPresent()) {
+                UserActivity userActivity = userActivityOptional.get();
+                userActivity.getSavedEvents().remove(event);
                 userActivityRepository.save(userActivity);
             } else {
                 throw new RuntimeException("UserActivity not found with id: " + userId);

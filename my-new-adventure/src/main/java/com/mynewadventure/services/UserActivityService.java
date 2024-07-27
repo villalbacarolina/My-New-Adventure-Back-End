@@ -1,12 +1,12 @@
 package com.mynewadventure.services;
 
-import com.mynewadventure.models.Event;
 import com.mynewadventure.models.UserActivity;
 import com.mynewadventure.repositories.EventRepository;
 import com.mynewadventure.repositories.UserActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -50,5 +50,9 @@ public class UserActivityService {
         } else {
             throw new RuntimeException("UserActivity not found with id: " + userActivityId);
         }
+    }
+
+    public List<UserActivity> getUserActivities() {
+        return userActivityRepository.findAll();
     }
 }

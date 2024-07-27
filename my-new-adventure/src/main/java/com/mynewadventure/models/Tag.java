@@ -16,14 +16,14 @@ import org.jetbrains.annotations.NotNull;
 @Entity
 @Getter @Setter
 public class Tag {
-	
-	@Id
+
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull @NotBlank @Size(min = 2, max = 20)
     private String name;
-	
+
     @ManyToMany(mappedBy = "tags")
     private Set<Event> eventsThatUseThisTag;
 

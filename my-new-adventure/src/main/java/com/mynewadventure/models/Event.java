@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -22,7 +24,7 @@ public class Event {
 
     @NotNull
     @NotBlank
-    @Size(min = 3, max = 100, message = "Title must be between 3 and 100 characters")
+    @Size(min = 2, max = 100, message = "Title must be between 2 and 100 characters")
     private String title;
     private String type;
     @NotNull
@@ -47,6 +49,7 @@ public class Event {
     @NotNull
     @ManyToOne
     @JoinColumn(name = "user_activity_id")
+    @JsonBackReference
     private UserActivity publisher;
 
     //--------CONSTRUCTORS--------
@@ -65,7 +68,6 @@ public class Event {
         this.location = location;
         this.description = description;
         this.link = link;
-        //this.publisher = publisher;
     }
 
     //--------METHODS--------
